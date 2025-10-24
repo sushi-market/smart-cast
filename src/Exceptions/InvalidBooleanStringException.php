@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DF\Exceptions;
+
+use Throwable;
+
+class InvalidBooleanStringException extends InvalidArgumentException
+{
+    public function __construct(
+        mixed $value,
+        ?string $message = null,
+        int $code = 0,
+        ?Throwable $previous = null,
+    ) {
+        $message = $message ?? "Value '{$this->prepareValue($value)}' is not a valid boolean string";
+
+        parent::__construct($value, $message, $code, $previous);
+    }
+}

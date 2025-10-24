@@ -1,0 +1,31 @@
+name: Run Pest test
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  pest:
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+
+      - name: Run composer install
+        run: composer install
+          --no-scripts
+          --no-progress
+          --prefer-dist
+          --optimize-autoloader
+          --ignore-platform-reqs
+
+      - name: Run tests
+        run: ./vendor/bin/pest
