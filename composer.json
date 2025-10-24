@@ -1,0 +1,49 @@
+{
+    "name": "sushi-market/smart-cast",
+    "description": "Smart casts for PHP",
+    "keywords": ["php", "smart", "cast"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sergey Svetus",
+            "email": "serega270900@yandex.ru"
+        }
+    ],
+    "require": {
+        "php": "^8.1"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.24.0",
+        "peckphp/peck": "^0.1.3",
+        "pestphp/pest": "^4.1.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0.2",
+        "phpstan/phpstan": "^2.1.26",
+        "rector/rector": "^2.1.7",
+        "symfony/var-dumper": "^7.3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "DF\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test:unit": "pest"
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "declare_strict_types": true,
+        "not_operator_with_space": false,
+        "not_operator_with_successor_space": false,
+        "trailing_comma_in_multiline": {
+            "elements": [
+                "arrays",
+                "arguments",
+                "parameters"
+            ]
+        }
+    }
+}

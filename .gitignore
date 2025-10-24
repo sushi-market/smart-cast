@@ -1,0 +1,48 @@
+# Dependency directories
+/vendor/
+
+# Composer files (except lock file)
+composer.phar
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Local configuration
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+*.cache
+
+# Build artifacts (если есть)
+/build/
+/dist/
+/phar/
+
+# Backup files
+*.backup
+*.bak
+
+# Unit test results
+/coverage/
+.phpunit.result.cache
+vendor/

@@ -1,0 +1,27 @@
+name: Pint format
+
+on: [ push ]
+
+jobs:
+  pint:
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - name: Get source code
+        uses: actions/checkout@v4
+
+      - name: PHP install
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+
+      - name: Pint install
+        run: composer global require laravel/pint
+
+      - name: Start pint
+        run: pint
+
+      - name: Files commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Pint formating"
