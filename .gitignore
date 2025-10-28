@@ -1,8 +1,9 @@
 # Dependency directories
 /vendor/
 
-# Composer files (except lock file)
+# Composer files
 composer.phar
+composer.lock
 
 # IDE and editor files
 .idea/
