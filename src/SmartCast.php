@@ -145,7 +145,7 @@ class SmartCast
     private static function checkZeroValue(int|float $value, bool $acceptsZero): void
     {
         if (!$acceptsZero && $value == 0) {
-            throw new ZeroValueException();
+            throw new ZeroValueException;
         }
     }
 }
