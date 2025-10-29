@@ -26,15 +26,35 @@ composer require sushi-market/smart-cast
 use DF\SmartCast;
 use DF\NumberSign;
 
-// Convert string to integer
-$intValue = SmartCast::stringToInt('123'); // Returns 123
+// Convert string to integer with strict type
+$intValue = SmartCast::stringToInt('123', strictType: false); // Returns 123
 
-// Convert with sign validation
-$positiveInt = SmartCast::stringToInt('456', NumberSign::POSITIVE);
+// Convert with sign and zero validation
+$positiveInt = SmartCast::stringToInt('456', sign: NumberSign::POSITIVE, acceptsZero: false);
 
-// Convert to float
-$floatValue = SmartCast::stringToFloat('123.45'); // Returns 123.45
+// Convert to float with null validation
+$floatValue = SmartCast::stringToFloat('123.45', acceptNull: false); // Returns 123.45
 
 // Convert to boolean
 $boolValue = SmartCast::stringToBoolean('true'); // Returns true
 ```
+or use helpers
+
+```php
+<?php
+
+// Convert string to integer with strict type
+$intValue = stringToInt('123', strictType: false); // Returns 123
+
+// Convert with sign and zero validation
+$positiveInt = stringToInt('456', sign: NumberSign::POSITIVE, acceptsZero: false);
+
+// Convert to float with null validation
+$floatValue = stringToFloat('123.45', acceptNull: false); // Returns 123.45
+
+// Convert to boolean
+$boolValue = stringToBoolean('true'); // Returns true
+```
+
+
+
