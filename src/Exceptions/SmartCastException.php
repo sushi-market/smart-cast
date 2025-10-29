@@ -71,8 +71,6 @@ class SmartCastException extends LogicException
      * Detect CLI-like environment.
      *
      * Includes phpdbg because it is commonly used interactively and for tests.
-     *
-     * @return bool
      */
     private static function isCli(): bool
     {
