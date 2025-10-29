@@ -1,6 +1,8 @@
 # 🔮 Smart Cast for PHP
 
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
+[![Latest Version](https://img.shields.io/github/release/sushi-market/smart-cast.svg?style=flat-square)](https://github.com/sushi-market/smart-cast/releases)
+[![Total Downloads](https://img.shields.io/packagist/dt/sushi-market/smart-cast.svg?style=flat-square)](https://packagist.org/packages/sushi-market/smart-cast)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 **Smart Cast** - An elegant and type-safe library for intelligent type casting in PHP. Eliminate boilerplate code and work with data confidently!
