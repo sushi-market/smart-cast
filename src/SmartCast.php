@@ -120,8 +120,8 @@ class SmartCast
      *
      * Accepts JSON-like arrays (e.g., "[1,2,3]") or delimited strings (e.g., "1,2,3").
      *
-     * @param string|array|null $value The value to convert
-     * @param bool $acceptNull If false, throws exception when value is null
+     * @param  string|array|null  $value  The value to convert
+     * @param  bool  $acceptNull  If false, throws exception when value is null
      * @return array|null Converted array value or null if accepted
      */
     public static function stringToArray(

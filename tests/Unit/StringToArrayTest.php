@@ -43,4 +43,3 @@ it('throws error for invalid json string', function () {
 it('throws error when delimited string contains empty items', function () {
     SmartCast::stringToArray('1,,3');
 })->throws(InvalidTypeException::class);
-
