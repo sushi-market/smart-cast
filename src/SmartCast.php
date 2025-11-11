@@ -115,6 +115,52 @@ class SmartCast
         return $result;
     }
 
+    /**
+     * Converts a string representation into an array with additional validation
+     *
+     * Accepts JSON-like arrays (e.g., "[1,2,3]") or delimited strings (e.g., "1,2,3").
+     *
+     * @param string|array|null $value The value to convert
+     * @param bool $acceptNull If false, throws exception when value is null
+     * @return array|null Converted array value or null if accepted
+     */
+    public static function stringToArray(
+        string|array|null $value,
+        bool $acceptNull = false,
+    ): ?array {
+        if (static::checkNullable($value, $acceptNull) && $value === null) {
+            return null;
+        }
+
+        if (is_array($value)) {
+            return $value;
+        }
+
+        $value = trim($value);
+
+        if ($value === '') {
+            throw new InvalidTypeException($value);
+        }
+
+        if (str_starts_with($value, '[') && str_ends_with($value, ']')) {
+            $decoded = json_decode($value, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
+                throw new InvalidTypeException($value);
+            }
+
+            return $decoded;
+        }
+
+        $items = array_map(fn (string $item) => trim($item), explode(',', $value));
+
+        if ($items === [] || in_array('', $items, true)) {
+            throw new InvalidTypeException($value);
+        }
+
+        return array_map(fn (string $item) => static::normalizeArrayValue($item), $items);
+    }
+
     private static function checkIsNumeric(string|int|float $value): void
     {
         if (!is_numeric($value)) {
@@ -147,5 +193,16 @@ class SmartCast
         if (!$acceptsZero && $value == 0) {
             throw new ZeroValueException;
         }
+    }
+
+    private static function normalizeArrayValue(string $value): mixed
+    {
+        if (is_numeric($value)) {
+            $numeric = $value + 0;
+
+            return $numeric;
+        }
+
+        return $value;
     }
 }
