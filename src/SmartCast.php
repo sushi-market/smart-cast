@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DF;
 
+use DF\Exceptions\InvalidArgumentException;
 use DF\Exceptions\InvalidBooleanStringException;
 use DF\Exceptions\InvalidNumberSignException;
 use DF\Exceptions\InvalidTypeException;
@@ -113,6 +114,59 @@ class SmartCast
         }
 
         return $result;
+    }
+
+    /**
+     * Ensures that a given value is a valid string and belongs to the specified set of allowed values.
+     *
+     * @param mixed $value The value to validate.
+     * @param mixed $allowedValues The allowed values as an array or the enum class name.
+     * @param bool $acceptNull Whether null values are accepted. If true and $value is null, returns null.
+     * @param bool $strict Whether to use strict type comparison (===) or loose comparison (==).
+     *
+     * @return string|null The validated string value or null if nullable.
+     *
+     * @throws InvalidTypeException If the value is not a string or does not match any allowed value.
+     * @throws InvalidArgumentException If $allowedValues is neither an array nor a valid enum class.
+     */
+    public static function ensureAllowedString(
+        mixed $value,
+        mixed $allowedValues,
+        bool $acceptNull = false,
+        bool $strict = true,
+    ): ?string
+    {
+        if (static::checkNullable($value, $acceptNull) && $value === null) {
+            return null;
+        }
+
+        if (!is_string($value)) {
+            throw new InvalidTypeException($value);
+        }
+
+        if (!is_array($allowedValues) && !(is_string($allowedValues) && enum_exists($allowedValues))) {
+            throw new InvalidArgumentException($allowedValues);
+        }
+
+        if (is_array($allowedValues) && !in_array($value, $allowedValues, $strict)) {
+            throw new InvalidTypeException($value);
+        }
+
+        if (is_string($allowedValues) && enum_exists($allowedValues)) {
+            $comparator = $strict
+                ? fn ($a, $b) => $a === $b
+                : fn ($a, $b) => $a == $b;
+
+            foreach ($allowedValues::cases() as $case) {
+                if ($comparator($case->value, $value)) {
+                    return $case->value;
+                }
+            }
+
+            throw new InvalidTypeException($value);
+        }
+
+        return $value;
     }
 
     private static function checkIsNumeric(string|int|float $value): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DF\NumberSign;
 use DF\SmartCast;
+use DF\Exceptions\InvalidTypeException;
 
 if (!function_exists('stringToInt')) {
     /**
@@ -63,5 +64,30 @@ if (!function_exists('stringToBoolean')) {
     function stringToBoolean(string|bool $value): bool
     {
         return SmartCast::stringToBoolean($value);
+    }
+}
+
+if (!function_exists('ensureAllowedString')) {
+    /**
+     * Ensures that a given value is a valid string and belongs to the specified set of allowed values.
+     *
+     * @param mixed $value The value to validate.
+     * @param mixed $allowedValues The allowed values as an array or the enum class name.
+     * @param bool $acceptNull Whether null values are accepted. If true and $value is null, returns null.
+     * @param bool $strict Whether to use strict type comparison (===) or loose comparison (==).
+     *
+     * @return string|null The validated string value or null if nullable.
+     *
+     * @throws InvalidTypeException If the value is not a string or does not match any allowed value.
+     * @throws InvalidArgumentException If $allowedValues is neither an array nor a valid enum class.
+     */
+    function ensureAllowedString(
+        mixed $value,
+        mixed $allowedValues,
+        bool $acceptNull = false,
+        bool $strict = true,
+    ): ?string
+    {
+        return SmartCast::ensureAllowedString($value, $allowedValues, $acceptNull, $strict);
     }
 }
