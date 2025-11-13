@@ -142,7 +142,10 @@ class SmartCast
             throw new InvalidTypeException($value);
         }
 
-        if (str_starts_with($value, '[') && str_ends_with($value, ']')) {
+        $startsWithBracket = str_starts_with($value, '[');
+        $endsWithBracket = str_ends_with($value, ']');
+
+        if ($startsWithBracket && $endsWithBracket) {
             $decoded = json_decode($value, true);
 
             if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
@@ -150,6 +153,10 @@ class SmartCast
             }
 
             return $decoded;
+        }
+
+        if ($startsWithBracket && !$endsWithBracket || !$startsWithBracket && $endsWithBracket) {
+            throw new InvalidTypeException($value);
         }
 
         $items = array_map(fn (string $item) => trim($item), explode(',', $value));
