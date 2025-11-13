@@ -18,8 +18,8 @@ it('throws exception when value not in allowed array', function () {
     SmartCast::ensureAllowedString('test', ['foo', 'bar']);
 })->throws(InvalidTypeException::class);
 
-
-enum TestEnum: string {
+enum TestEnum: string
+{
     case One = 'one';
     case Two = 'two';
     case Three = 'three';
