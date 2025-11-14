@@ -119,18 +119,17 @@ class SmartCast
     /**
      * Ensures that a given value is a valid string and belongs to the specified set of allowed values.
      *
-     * @param string|null $value The value to validate.
-     * @param mixed $allowedValues The allowed values as an array or the enum class name.
-     * @param bool $acceptNull Whether null values are accepted. If true and $value is null, returns null.
-     * @param bool $strict Whether to use strict type comparison (===) or loose comparison (==).
-     *
+     * @param  string|null  $value  The value to validate.
+     * @param  mixed  $allowedValues  The allowed values as an array or the enum class name.
+     * @param  bool  $acceptNull  Whether null values are accepted. If true and $value is null, returns null.
+     * @param  bool  $strict  Whether to use strict type comparison (===) or loose comparison (==).
      * @return string|null The validated string value or null if nullable.
      *
      * @throws InvalidTypeException If the value is not a string or does not match any allowed value.
      * @throws InvalidArgumentException If $allowedValues is neither an array nor a valid enum class.
      */
     public static function ensureAllowedString(
-        string|null $value,
+        ?string $value,
         mixed $allowedValues,
         bool $acceptNull = false,
         bool $strict = true,
