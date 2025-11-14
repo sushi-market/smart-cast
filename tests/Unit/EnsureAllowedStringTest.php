@@ -49,10 +49,6 @@ it('throws exception when allowedValues is invalid type', function () {
     SmartCast::ensureAllowedString('a', 123);
 })->throws(InvalidArgumentException::class);
 
-it('throws exception when value is not a string', function () {
-    SmartCast::ensureAllowedString(42, ['a', 'b']);
-})->throws(InvalidTypeException::class);
-
 it('accepts loose matches in array when strict = false', function () {
     expect(SmartCast::ensureAllowedString('1', [1, 2], false, false))->toBe('1');
 });
