@@ -80,8 +80,7 @@ if (!function_exists('stringToArray')) {
     function stringToArray(
         string|array|null $value,
         bool $acceptNull = false,
-        string $delimiter = ',',
     ): ?array {
-        return SmartCast::stringToArray($value, $acceptNull, $delimiter);
+        return SmartCast::stringToArray($value, $acceptNull);
     }
 }
