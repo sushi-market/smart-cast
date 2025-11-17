@@ -202,12 +202,14 @@ class SmartCast
         }
     }
 
-    private static function normalizeArrayValue(string $value): mixed
+    private static function normalizeArrayValue(mixed $value): mixed
     {
-        if (is_numeric($value)) {
-            $numeric = $value + 0;
+        if (is_array($value)) {
+            return array_map(fn (mixed $item) => static::normalizeArrayValue($item), $value);
+        }
 
-            return $numeric;
+        if (is_string($value) && is_numeric($value)) {
+            return $value + 0;
         }
 
         return $value;
