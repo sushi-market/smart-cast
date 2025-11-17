@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DF;
 
+use BackedEnum;
 use DF\Exceptions\InvalidArgumentException;
 use DF\Exceptions\InvalidBooleanStringException;
 use DF\Exceptions\InvalidNumberSignException;
@@ -120,7 +121,7 @@ class SmartCast
      * Ensures that a given value is a valid string and belongs to the specified set of allowed values.
      *
      * @param  string|null  $value  The value to validate.
-     * @param  mixed  $allowedValues  The allowed values as an array or the enum class name.
+     * @param  mixed  $allowedValues  The allowed values as an array of strings or the backed enum class name.
      * @param  bool  $acceptNull  Whether null values are accepted. If true and $value is null, returns null.
      * @param  bool  $strict  Whether to use strict type comparison (===) or loose comparison (==).
      * @return string|null The validated string value or null if nullable.
@@ -138,11 +139,15 @@ class SmartCast
             return null;
         }
 
-        if (!is_array($allowedValues) && !(is_string($allowedValues) && enum_exists($allowedValues))) {
+        $isArray = is_array($allowedValues);
+        $isEnumClass = is_string($allowedValues) && enum_exists($allowedValues);
+        $isBackedEnumClass = $isEnumClass && is_subclass_of($allowedValues, BackedEnum::class);
+
+        if (!$isArray && !$isBackedEnumClass) {
             throw new InvalidArgumentException($allowedValues);
         }
 
-        if (is_array($allowedValues)) {
+        if ($isArray) {
             if (!in_array($value, $allowedValues, $strict)) {
                 throw new InvalidTypeException($value);
             }
