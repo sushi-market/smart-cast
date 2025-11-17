@@ -5,6 +5,8 @@ declare(strict_types=1);
 use DF\Exceptions\InvalidArgumentException;
 use DF\Exceptions\InvalidTypeException;
 use DF\SmartCast;
+use Tests\Support\Enums\BackedTestEnum;
+use Tests\Support\Enums\UnitTestEnum;
 
 it('returns the value when it is allowed in array', function (string $value) {
     expect(SmartCast::ensureAllowedString($value, ['foo', 'bar', 'baz']))->toBe($value);
@@ -18,15 +20,8 @@ it('throws exception when value not in allowed array', function () {
     SmartCast::ensureAllowedString('test', ['foo', 'bar']);
 })->throws(InvalidTypeException::class);
 
-enum TestEnum: string
-{
-    case One = 'one';
-    case Two = 'two';
-    case Three = 'three';
-}
-
 it('returns the value when it matches enum case value', function (string $value) {
-    expect(SmartCast::ensureAllowedString($value, TestEnum::class))->toBe($value);
+    expect(SmartCast::ensureAllowedString($value, BackedTestEnum::class))->toBe($value);
 })->with([
     'one',
     'two',
@@ -34,8 +29,12 @@ it('returns the value when it matches enum case value', function (string $value)
 ]);
 
 it('throws exception when value does not match enum case value', function () {
-    SmartCast::ensureAllowedString('invalid', TestEnum::class);
+    SmartCast::ensureAllowedString('invalid', BackedTestEnum::class);
 })->throws(InvalidTypeException::class);
+
+it('throws exception when enum is not backed', function () {
+    SmartCast::ensureAllowedString('Foo', UnitTestEnum::class);
+})->throws(InvalidArgumentException::class);
 
 it('returns null when nullable and value is null', function () {
     expect(SmartCast::ensureAllowedString(null, ['a', 'b'], true))->toBeNull();
@@ -47,6 +46,10 @@ it('throws exception when not nullable and value is null', function () {
 
 it('throws exception when allowedValues is invalid type', function () {
     SmartCast::ensureAllowedString('a', 123);
+})->throws(InvalidArgumentException::class);
+
+it('throws exception when string allowedValues is not an enum', function () {
+    SmartCast::ensureAllowedString('value', \stdClass::class);
 })->throws(InvalidArgumentException::class);
 
 it('accepts loose matches in array when strict = false', function () {
