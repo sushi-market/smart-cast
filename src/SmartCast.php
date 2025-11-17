@@ -152,7 +152,7 @@ class SmartCast
                 throw new InvalidTypeException($value);
             }
 
-            return $decoded;
+            return array_map(fn (mixed $item) => static::normalizeArrayValue($item), $decoded);
         }
 
         if ($startsWithBracket && !$endsWithBracket || !$startsWithBracket && $endsWithBracket) {
