@@ -10,4 +10,3 @@ enum BackedTestEnum: string
     case Two = 'two';
     case Three = 'three';
 }
-

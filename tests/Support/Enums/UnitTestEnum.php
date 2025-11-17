@@ -9,4 +9,3 @@ enum UnitTestEnum
     case Foo;
     case Bar;
 }
-
