@@ -74,7 +74,6 @@ if (!function_exists('stringToArray')) {
      *
      * @param  string|array|null  $value  The value to convert
      * @param  bool  $acceptNull  If false, throws exception when value is null
-     * @param  string  $delimiter  Delimiter used for plain string lists (defaults to comma)
      * @return array|null Converted array value
      */
     function stringToArray(
