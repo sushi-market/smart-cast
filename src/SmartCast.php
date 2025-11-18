@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DF;
 
+use BackedEnum;
 use DF\Exceptions\FloatOverflowException;
 use DF\Exceptions\IntegerOverflowException;
-use BackedEnum;
 use DF\Exceptions\InvalidArgumentException;
 use DF\Exceptions\InvalidBooleanStringException;
 use DF\Exceptions\InvalidNumberSignException;
