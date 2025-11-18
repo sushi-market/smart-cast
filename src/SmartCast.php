@@ -36,7 +36,7 @@ class SmartCast
         static::checkIsNumeric($value);
 
         if (is_string($value)) {
-            $value = preg_replace('/\.0+$/', '', $value);
+            $value = static::normalizeIntegerString($value);
         }
 
         if ($strictType && is_string($value) && preg_match('/\d+\.+(\d+)?/', $value) !== 0) {
@@ -147,5 +147,14 @@ class SmartCast
         if (!$acceptsZero && $value == 0) {
             throw new ZeroValueException;
         }
+    }
+
+    private static function normalizeIntegerString(string $value): string
+    {
+        // Remove leading + to avoid issues
+        $result = ltrim($value, '+');
+
+        // Remove trailing .0
+        return preg_replace('/\.0+$/', '', $result);
     }
 }
