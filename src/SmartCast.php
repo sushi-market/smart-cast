@@ -192,6 +192,8 @@ class SmartCast
             $result = str_replace('-.', '-0.', $result);
         }
 
+        $result = strtoupper($result);
+
         if ($result === '') {
             $result = '0';
         }
