@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DF;
 
+use DF\Exceptions\IntegerOverflowException;
 use DF\Exceptions\InvalidBooleanStringException;
 use DF\Exceptions\InvalidNumberSignException;
 use DF\Exceptions\InvalidTypeException;
@@ -41,6 +42,10 @@ class SmartCast
 
         if ($strictType && is_string($value) && preg_match('/\d+\.+(\d+)?/', $value) !== 0) {
             throw new InvalidTypeException($value);
+        }
+
+        if (is_string($value)) {
+            static::checkIntegerStringOverflow($value);
         }
 
         $result = (int) $value;
@@ -166,5 +171,14 @@ class SmartCast
 
         // Remove trailing .0
         return $result;
+    }
+
+    private static function checkIntegerStringOverflow(string $value): void
+    {
+        $value = preg_replace('/\..*$/', '', $value);
+
+        if ($value !== (string) (int) $value) {
+            throw new IntegerOverflowException($value);
+        }
     }
 }

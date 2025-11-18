@@ -2,12 +2,31 @@
 
 declare(strict_types=1);
 
+use DF\Exceptions\IntegerOverflowException;
 use DF\Exceptions\InvalidNumberSignException;
 use DF\Exceptions\InvalidTypeException;
 use DF\Exceptions\NotNumericException;
 use DF\Exceptions\ZeroValueException;
 use DF\NumberSign;
 use DF\SmartCast;
+
+dataset('valid integers', [
+    'php_int_max' => ['9223372036854775807', PHP_INT_MAX],
+    'php_int_min' => ['-9223372036854775808', PHP_INT_MIN],
+    'zero' => ['0', 0],
+    'positive' => ['5', 5],
+    'negative' => ['-5', -5],
+    'with_plus' => ['+123', 123],
+    'leading_zeros' => ['000123', 123],
+    'trailing_dot_zero' => ['123.0', 123],
+]);
+
+dataset('overflow integers', [
+    'just_above_max' => ['9223372036854775808'],
+    'much_above' => ['9999999999999999999999999'],
+    'just_below_min' => ['-9223372036854775809'],
+    'just_below_min_with_dot' => ['-9223372036854775809'],
+]);
 
 it('successfully casts various values to integer', function (mixed $value, int $expected) {
     expect(SmartCast::stringToInt($value))->toBeInt()->toBe($expected);
@@ -50,6 +69,16 @@ it('return null if accepted', function () {
 
     expect($result)->toBeNull();
 });
+
+it('cast a valid integer when the value fits within PHP_INT_MAX', function (mixed $value, int $expected) {
+    $result = SmartCast::stringToInt($value);
+
+    expect($result)->toBeInt()->toBe($expected);
+})->with('valid integers');
+
+it('throws IntegerOverflowException when the numeric string exceeds PHP integer range', function (string $input) {
+    SmartCast::stringToInt($input);
+})->throws(IntegerOverflowException::class)->with('overflow integers');
 
 it('throws error when value is null and null is not accepted', function () {
     SmartCast::stringToInt(null);
