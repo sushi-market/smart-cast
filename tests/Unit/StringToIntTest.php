@@ -25,7 +25,7 @@ dataset('overflow integers', [
     'just_above_max' => ['9223372036854775808'],
     'much_above' => ['9999999999999999999999999'],
     'just_below_min' => ['-9223372036854775809'],
-    'just_below_min_with_dot' => ['-9223372036854775809'],
+    'just_below_min_with_dot' => ['-9223372036854775809.0'],
 ]);
 
 it('successfully casts various values to integer', function (mixed $value, int $expected) {
