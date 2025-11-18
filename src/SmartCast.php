@@ -79,6 +79,10 @@ class SmartCast
 
         static::checkIsNumeric($value);
 
+        if (is_string($value)) {
+            $value = static::normalizeFloatString($value);
+        }
+
         if ($strictType && is_string($value) && preg_match('/^\d+\.\d+$/', $value) === 0) {
             throw new InvalidTypeException($value);
         }
@@ -169,7 +173,29 @@ class SmartCast
             $result = '0';
         }
 
-        // Remove trailing .0
+        return $result;
+    }
+
+    private static function normalizeFloatString(string $value): string
+    {
+        // Remove leading + to avoid issues
+        $result = ltrim($value, '+');
+
+        // Remove leading 0 to avoid issues
+        $result = ltrim($result, '0');
+
+        if (str_starts_with($result, '.')) {
+            $result = str_replace('.', '0.', $result);
+        }
+
+        if (str_starts_with($result, '-.')) {
+            $result = str_replace('-.', '-0.', $result);
+        }
+
+        if ($result === '') {
+            $result = '0';
+        }
+
         return $result;
     }
 
