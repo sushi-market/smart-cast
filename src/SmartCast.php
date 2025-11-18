@@ -217,10 +217,11 @@ class SmartCast
 
     private static function checkFloatStringOverflow(string $value): void
     {
+        // Remove trailing .0
+        $value = preg_replace('/\.0+$/', '', $value);
         $floatValue = (float) $value;
-        $stringFloatValue = (string) $floatValue;
 
-        if ($floatValue === INF || !in_array($value, [$stringFloatValue, "$stringFloatValue.0"])) {
+        if ($floatValue === INF || $value !== (string) $floatValue) {
             throw new FloatOverflowException($value);
         }
     }

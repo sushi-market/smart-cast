@@ -63,7 +63,7 @@ dataset('overflow floats', [
     ['1.7976931348624e+308'],
     ['1e400'],
     ['-1e400'],
-    ['9999999999999999999999999'],
+    ['99999999999999999999999999'],
 ]);
 
 it('successfully casts various values to float', function (mixed $value, float $expected) {
