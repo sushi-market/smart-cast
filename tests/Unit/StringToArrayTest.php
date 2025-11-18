@@ -92,6 +92,8 @@ it('successfully casts various values to array', function (mixed $value, array $
 })->with([
     // JSON arrays
     ['[1,2,3]', [1, 2, 3]],
+    ['[1.0,2,3.5]', [1.0, 2, 3.5]],
+    ['[-1.0,-2,3]', [-1.0, -2, 3]],
     ['["1","02","foo"]', [1, 2, 'foo']],
     ['[true,false,null]', [true, false, null]],
     ['[1,[2,"3"],[4,["5"]]]', [1, [2, 3], [4, [5]]]],
