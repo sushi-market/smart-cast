@@ -11,26 +11,6 @@ use DF\NumberSign;
 use DF\SmartCast;
 
 dataset('valid integers', [
-    'php_int_max' => ['9223372036854775807', PHP_INT_MAX],
-    'php_int_min' => ['-9223372036854775808', PHP_INT_MIN],
-    'zero' => ['0', 0],
-    'positive' => ['5', 5],
-    'negative' => ['-5', -5],
-    'with_plus' => ['+123', 123],
-    'leading_zeros' => ['000123', 123],
-    'trailing_dot_zero' => ['123.0', 123],
-]);
-
-dataset('overflow integers', [
-    'just_above_max' => ['9223372036854775808'],
-    'much_above' => ['9999999999999999999999999'],
-    'just_below_min' => ['-9223372036854775809'],
-    'just_below_min_with_dot' => ['-9223372036854775809.0'],
-]);
-
-it('successfully casts various values to integer', function (mixed $value, int $expected) {
-    expect(SmartCast::stringToInt($value))->toBeInt()->toBe($expected);
-})->with([
     // String integers
     ['1', 1],
     ['123', 123],
@@ -50,7 +30,21 @@ it('successfully casts various values to integer', function (mixed $value, int $
     [0, 0],
     [-5, -5],
     [123, 123],
+
+    ['9223372036854775807', PHP_INT_MAX],
+    ['-9223372036854775808', PHP_INT_MIN],
 ]);
+
+dataset('overflow integers', [
+    ['9223372036854775808'],
+    ['9999999999999999999999999'],
+    ['-9223372036854775809'],
+    ['-9223372036854775809.0'],
+]);
+
+it('successfully casts various values to integer', function (mixed $value, int $expected) {
+    expect(SmartCast::stringToInt($value))->toBeInt()->toBe($expected);
+})->with('valid integers');
 
 it('cast to int trailing zero float value', function () {
     $result = SmartCast::stringToInt('1.0');
@@ -69,12 +63,6 @@ it('return null if accepted', function () {
 
     expect($result)->toBeNull();
 });
-
-it('cast a valid integer when the value fits within PHP_INT_MAX', function (mixed $value, int $expected) {
-    $result = SmartCast::stringToInt($value);
-
-    expect($result)->toBeInt()->toBe($expected);
-})->with('valid integers');
 
 it('throws IntegerOverflowException when the numeric string exceeds PHP integer range', function (string $input) {
     SmartCast::stringToInt($input);
