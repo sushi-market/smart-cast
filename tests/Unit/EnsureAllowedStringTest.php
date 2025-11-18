@@ -8,54 +8,83 @@ use DF\SmartCast;
 use Tests\Support\Enums\BackedTestEnum;
 use Tests\Support\Enums\UnitTestEnum;
 
-it('returns the value when it is allowed in array', function (string $value) {
-    expect(SmartCast::ensureAllowedString($value, ['foo', 'bar', 'baz']))->toBe($value);
-})->with([
-    'foo',
-    'bar',
-    'baz',
+dataset('valid values', [
+    // array allowed values of string
+    ['foo', ['foo', 'bar', 'baz']],
+    ['bar', ['foo', 'bar', 'baz']],
+    ['baz', ['foo', 'bar', 'baz']],
+
+    // array allowed values of numeric
+    ['1', ['1', '2', '3']],
+    ['2', [1, '2', '3']],
+    ['3', [1, 2, '3']],
+
+    // enum allowed values
+    ['one', BackedTestEnum::class],
+    ['two', BackedTestEnum::class],
+    ['three', BackedTestEnum::class],
 ]);
 
-it('throws exception when value not in allowed array', function () {
-    SmartCast::ensureAllowedString('test', ['foo', 'bar']);
-})->throws(InvalidTypeException::class);
+dataset('valid nullable values', [
+    // array allowed values
+    [null, ['foo', 'bar', 'baz']],
 
-it('returns the value when it matches enum case value', function (string $value) {
-    expect(SmartCast::ensureAllowedString($value, BackedTestEnum::class))->toBe($value);
-})->with([
-    'one',
-    'two',
-    'three',
+    // enum allowed values
+    [null, BackedTestEnum::class],
 ]);
 
-it('throws exception when value does not match enum case value', function () {
-    SmartCast::ensureAllowedString('invalid', BackedTestEnum::class);
-})->throws(InvalidTypeException::class);
+dataset('valid not strict values', [
+    // array allowed values of numeric
+    ['2', ['1', 2, '3']],
+]);
+
+dataset('invalid values', [
+    // array allowed values
+    ['invalid', ['foo', 'bar', 'baz']],
+    [null, ['foo', 'bar', 'baz']],
+
+    // array allowed values of numeric
+    ['1', [1, 2, '3']],
+    ['2', ['1', 2, '3']],
+    ['3', [1, 2, 3]],
+    [null, ['1', 2, '3']],
+
+    // enum allowed values
+    ['invalid', BackedTestEnum::class],
+    [null, BackedTestEnum::class],
+]);
+
+it('returns the value when it is allowed in array', function ($value, $allowed): void {
+    expect(SmartCast::ensureAllowedString(
+        value: $value,
+        allowedValues: $allowed,
+    ))->toBe($value);
+})->with('valid values');
+
+it('returns the value when it is allowed in array and acceptNull', function ($value, $allowed) {
+    expect(SmartCast::ensureAllowedString(
+        value: $value,
+        allowedValues: $allowed,
+        acceptNull: true,
+    ))->toBe($value);
+})->with('valid nullable values');
+
+it('accepts loose matches in array when strict = false', function ($value, $allowed) {
+    expect(SmartCast::ensureAllowedString(
+        value: $value,
+        allowedValues: $allowed,
+        strict: false,
+    ))->toBe($value);
+})->with('valid not strict values');
+
+it('throws exception when value not in allowed array', function ($value, $allowed) {
+    SmartCast::ensureAllowedString($value, $allowed);
+})->throws(InvalidTypeException::class)->with('invalid values');
 
 it('throws exception when enum is not backed', function () {
     SmartCast::ensureAllowedString('Foo', UnitTestEnum::class);
 })->throws(InvalidArgumentException::class);
 
-it('returns null when nullable and value is null', function () {
-    expect(SmartCast::ensureAllowedString(null, ['a', 'b'], true))->toBeNull();
-});
-
-it('throws exception when not nullable and value is null', function () {
-    SmartCast::ensureAllowedString(null, ['a', 'b'], false);
-})->throws(InvalidTypeException::class);
-
-it('throws exception when allowedValues is invalid type', function () {
-    SmartCast::ensureAllowedString('a', 123);
-})->throws(InvalidArgumentException::class);
-
 it('throws exception when string allowedValues is not an enum', function () {
-    SmartCast::ensureAllowedString('value', \stdClass::class);
+    SmartCast::ensureAllowedString('value', stdClass::class);
 })->throws(InvalidArgumentException::class);
-
-it('accepts loose matches in array when strict = false', function () {
-    expect(SmartCast::ensureAllowedString('1', [1, 2], false, false))->toBe('1');
-});
-
-it('rejects loose matches in array when strict = true', function () {
-    SmartCast::ensureAllowedString('1', [1, 2], false, true);
-})->throws(InvalidTypeException::class);
