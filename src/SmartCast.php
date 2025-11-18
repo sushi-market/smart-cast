@@ -163,30 +163,16 @@ class SmartCast
         }
     }
 
-    private static function normalizeIntegerString(string $value): string
+    private static function normalizeFloatString(string $value): string
     {
         $result = trim($value);
 
         // Remove leading + to avoid issues
         $result = ltrim($result, '+');
 
-        // Remove leading 0 to avoid issues
-        $result = ltrim($result, '0');
-
-        // Remove trailing .0
-        $result = preg_replace('/\.0+$/', '', $result);
-
-        if ($result === '') {
-            $result = '0';
+        if (static::numericStringContainsOnlyZeros($result)) {
+            return '0';
         }
-
-        return $result;
-    }
-
-    private static function normalizeFloatString(string $value): string
-    {
-        // Remove leading + to avoid issues
-        $result = ltrim($value, '+');
 
         // Remove leading 0 to avoid issues
         $result = ltrim($result, '0');
@@ -199,13 +185,24 @@ class SmartCast
             $result = str_replace('-.', '-0.', $result);
         }
 
-        $result = strtoupper($result);
+        return strtoupper($result);
+    }
 
-        if ($result === '') {
-            $result = '0';
-        }
+    private static function normalizeIntegerString(string $value): string
+    {
+        $result = static::normalizeFloatString($value);
 
-        return $result;
+        // Remove trailing .0
+        return preg_replace('/\.0+$/', '', $result);
+    }
+
+    public static function numericStringContainsOnlyZeros(string $value): bool
+    {
+        // Remove sign, decimal point and exponent notation
+        $normalized = preg_replace('/[+\-.eE]/', '', $value);
+
+        // Return true only if something remains and it consists entirely of zeros
+        return $normalized !== '' && preg_match('/^0+$/', $normalized) === 1;
     }
 
     private static function checkIntegerStringOverflow(string $value): void
@@ -220,12 +217,9 @@ class SmartCast
     private static function checkFloatStringOverflow(string $value): void
     {
         $floatValue = (float) $value;
+        $stringFloatValue = (string) $floatValue;
 
-        if ($floatValue === 0.0) {
-            return;
-        }
-
-        if ($floatValue === INF || $value !== (string) $floatValue) {
+        if ($floatValue === INF || !in_array($value, [$stringFloatValue, "$stringFloatValue.0"])) {
             throw new FloatOverflowException($value);
         }
     }

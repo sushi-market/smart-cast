@@ -25,11 +25,23 @@ dataset('valid integers', [
     [' 123 ', 123],
     ['   123        ', 123],
 
+    // String integers with leading zeros
+    ['00', 0],
+    ['0123', 123],
+    ['00123', 123],
+    ['000123', 123],
+    ['0000123', 123],
+    ['0000123.0', 123],
+    ['0000123.00', 123],
+
     // Float-like strings that are essentially integers
     ['1.0', 1],
     ['2.00', 2],
     ['-3.0', -3],
     ['0.00', 0],
+    ['.0', 0],
+    ['+.0', 0],
+    ['-.0', 0],
     ['123.000', 123],
 
     // Integer values directly
