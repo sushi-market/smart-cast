@@ -154,6 +154,9 @@ class SmartCast
         // Remove leading + to avoid issues
         $result = ltrim($value, '+');
 
+        // Remove leading 0 to avoid issues
+        $result = ltrim($result, '0');
+
         // Remove trailing .0
         return preg_replace('/\.0+$/', '', $result);
     }
