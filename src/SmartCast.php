@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DF;
 
+use DF\Exceptions\FloatOverflowException;
+use DF\Exceptions\IntegerOverflowException;
 use BackedEnum;
 use DF\Exceptions\InvalidArgumentException;
 use DF\Exceptions\InvalidBooleanStringException;
@@ -38,11 +40,15 @@ class SmartCast
         static::checkIsNumeric($value);
 
         if (is_string($value)) {
-            $value = preg_replace('/\.0+$/', '', $value);
+            $value = static::normalizeNumericString($value);
         }
 
         if ($strictType && is_string($value) && preg_match('/\d+\.+(\d+)?/', $value) !== 0) {
             throw new InvalidTypeException($value);
+        }
+
+        if (is_string($value)) {
+            static::checkIntegerStringOverflow($value);
         }
 
         $result = (int) $value;
@@ -76,8 +82,16 @@ class SmartCast
 
         static::checkIsNumeric($value);
 
+        if (is_string($value)) {
+            $value = static::normalizeNumericString($value);
+        }
+
         if ($strictType && is_string($value) && preg_match('/^\d+\.\d+$/', $value) === 0) {
             throw new InvalidTypeException($value);
+        }
+
+        if (is_string($value)) {
+            static::checkFloatStringOverflow($value);
         }
 
         $result = (float) $value;
@@ -115,6 +129,59 @@ class SmartCast
         }
 
         return $result;
+    }
+
+    /**
+     * Converts a string representation into an array with additional validation
+     *
+     * Accepts JSON-like arrays (e.g., "[1,2,3]") or delimited strings (e.g., "1,2,3").
+     *
+     * @param  string|array|null  $value  The value to convert
+     * @param  bool  $acceptNull  If false, throws exception when value is null
+     * @return array|null Converted array value or null if accepted
+     */
+    public static function stringToArray(
+        string|array|null $value,
+        bool $acceptNull = false,
+    ): ?array {
+        if ($value === null && static::checkNullable($value, $acceptNull)) {
+            return null;
+        }
+
+        if (is_array($value)) {
+            return $value;
+        }
+
+        $value = trim($value);
+
+        if ($value === '') {
+            throw new InvalidTypeException($value);
+        }
+
+        $startsWithBracket = str_starts_with($value, '[');
+        $endsWithBracket = str_ends_with($value, ']');
+
+        if ($startsWithBracket && $endsWithBracket) {
+            $decoded = json_decode($value, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
+                throw new InvalidTypeException($value);
+            }
+
+            return array_map(fn (mixed $item) => static::normalizeArrayValue($item), $decoded);
+        }
+
+        if ($startsWithBracket !== $endsWithBracket) {
+            throw new InvalidTypeException($value);
+        }
+
+        $items = static::normalizeArrayValue(explode(',', $value));
+
+        if (in_array('', $items, true)) {
+            throw new InvalidTypeException($value);
+        }
+
+        return $items;
     }
 
     /**
@@ -200,5 +267,89 @@ class SmartCast
         if (!$acceptsZero && $value == 0) {
             throw new ZeroValueException;
         }
+    }
+
+    private static function normalizeNumericString(string $value): string
+    {
+        $result = trim($value);
+
+        // Remove leading + to avoid issues
+        $result = ltrim($result, '+');
+
+        if (static::numericStringContainsOnlyZeros($result)) {
+            return '0';
+        }
+
+        // Remove leading 0 to avoid issues
+        $result = ltrim($result, '0');
+
+        // Convert e.g. .15 to 0.15
+        if (str_starts_with($result, '.')) {
+            $result = str_replace('.', '0.', $result);
+        }
+
+        // Convert e.g. -.15 to -0.15
+        if (str_starts_with($result, '-.')) {
+            $result = str_replace('-.', '-0.', $result);
+        }
+
+        // Remove trailing .0
+        $result = preg_replace('/\.0+$/', '', $result);
+
+        // Convert to uppercase to normalize exponential notation (e.g., 1e+10 to 1E+10)
+        return strtoupper($result);
+    }
+
+    private static function numericStringContainsOnlyZeros(string $value): bool
+    {
+        // Remove sign, decimal point and exponent notation
+        $normalized = preg_replace('/[+\-.eE]/', '', $value);
+
+        // Return true only if something remains and it consists entirely of zeros
+        return $normalized !== '' && preg_match('/^0+$/', $normalized) === 1;
+    }
+
+    private static function checkIntegerStringOverflow(string $value): void
+    {
+        // Remove all after dot (e.g. 123.15 to 123)
+        $value = preg_replace('/\..*$/', '', $value);
+
+        if ($value !== (string) (int) $value) {
+            throw new IntegerOverflowException($value);
+        }
+    }
+
+    private static function checkFloatStringOverflow(string $value): void
+    {
+        if ((float) $value === INF || $value !== (string) (float) $value) {
+            throw new FloatOverflowException($value);
+        }
+    }
+
+    private static function normalizeArrayValue(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return array_map(__METHOD__, $value);
+        }
+
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        if (!is_numeric($value)) {
+            return trim($value);
+        }
+
+        $value = static::normalizeNumericString($value);
+
+        if (filter_var($value, FILTER_VALIDATE_INT) !== false) {
+            return static::stringToInt($value);
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
+            return static::stringToFloat($value);
+        }
+
+        return $value;
     }
 }
