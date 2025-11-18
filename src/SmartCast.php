@@ -165,8 +165,10 @@ class SmartCast
 
     private static function normalizeIntegerString(string $value): string
     {
+        $result = trim($value);
+
         // Remove leading + to avoid issues
-        $result = ltrim($value, '+');
+        $result = ltrim($result, '+');
 
         // Remove leading 0 to avoid issues
         $result = ltrim($result, '0');

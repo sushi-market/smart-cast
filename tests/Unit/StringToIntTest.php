@@ -14,9 +14,16 @@ dataset('valid integers', [
     // String integers
     ['1', 1],
     ['123', 123],
+    ['123', 123],
     ['0', 0],
     ['-5', -5],
     ['+10', 10],
+
+    // String integers with spaces
+    [' 123', 123],
+    ['123 ', 123],
+    [' 123 ', 123],
+    ['   123        ', 123],
 
     // Float-like strings that are essentially integers
     ['1.0', 1],
