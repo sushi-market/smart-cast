@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DF;
 
+use DF\Exceptions\FloatOverflowException;
 use DF\Exceptions\IntegerOverflowException;
 use DF\Exceptions\InvalidBooleanStringException;
 use DF\Exceptions\InvalidNumberSignException;
@@ -85,6 +86,10 @@ class SmartCast
 
         if ($strictType && is_string($value) && preg_match('/^\d+\.\d+$/', $value) === 0) {
             throw new InvalidTypeException($value);
+        }
+
+        if (is_string($value)) {
+            static::checkFloatStringOverflow($value);
         }
 
         $result = (float) $value;
@@ -207,6 +212,19 @@ class SmartCast
 
         if ($value !== (string) (int) $value) {
             throw new IntegerOverflowException($value);
+        }
+    }
+
+    private static function checkFloatStringOverflow(string $value): void
+    {
+        $floatValue = (float) $value;
+
+        if ($floatValue === 0.0) {
+            return;
+        }
+
+        if ($floatValue === INF || $value !== (string) $floatValue) {
+            throw new FloatOverflowException($value);
         }
     }
 }
