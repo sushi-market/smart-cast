@@ -159,13 +159,13 @@ class SmartCast
             throw new InvalidTypeException($value);
         }
 
-        $items = array_map(fn (string $item) => trim($item), explode(',', $value));
+        $items = static::normalizeArrayValue(explode(',', $value));
 
         if (in_array('', $items, true)) {
             throw new InvalidTypeException($value);
         }
 
-        return array_map(fn (string $item) => static::normalizeArrayValue($item), $items);
+        return $items;
     }
 
     private static function checkIsNumeric(string|int|float $value): void
@@ -206,6 +206,10 @@ class SmartCast
     {
         if (is_array($value)) {
             return array_map(fn (mixed $item) => static::normalizeArrayValue($item), $value);
+        }
+
+        if (is_string($value)) {
+            $value = trim($value);
         }
 
         if (is_string($value) && is_numeric($value)) {
