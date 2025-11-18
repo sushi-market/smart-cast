@@ -128,7 +128,7 @@ class SmartCast
         string|array|null $value,
         bool $acceptNull = false,
     ): ?array {
-        if (static::checkNullable($value, $acceptNull) && $value === null) {
+        if ($value === null && static::checkNullable($value, $acceptNull)) {
             return null;
         }
 
