@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DF\Exceptions\FloatOverflowException;
 use DF\Exceptions\InvalidNumberSignException;
 use DF\Exceptions\InvalidTypeException;
 use DF\Exceptions\NotNumericException;
@@ -9,9 +10,7 @@ use DF\Exceptions\ZeroValueException;
 use DF\NumberSign;
 use DF\SmartCast;
 
-it('successfully casts various values to float', function (mixed $value, float $expected) {
-    expect(SmartCast::stringToFloat($value))->toBeFloat()->toBe($expected);
-})->with([
+dataset('valid floats', [
     // String floats
     ['1.5', 1.5],
     ['3.14', 3.14],
@@ -24,6 +23,21 @@ it('successfully casts various values to float', function (mixed $value, float $
     ['0', 0.0],
     ['-5', -5.0],
     ['123', 123.0],
+
+    // String floats with spaces
+    [' 123.123', 123.123],
+    ['123.123 ', 123.123],
+    [' 123.123 ', 123.123],
+    ['   123.123        ', 123.123],
+
+    // String floats with leading zeros
+    ['00', 0],
+    ['0123', 123.0],
+    ['00123', 123.0],
+    ['000123', 123.0],
+    ['0000123', 123.0],
+    ['0000123.0', 123.0],
+    ['0000123.00', 123.0],
 
     // Float values directly
     [1.5, 1.5],
@@ -41,7 +55,20 @@ it('successfully casts various values to float', function (mixed $value, float $
     ['.5', 0.5],
     ['-.25', -0.25],
     ['0.0001', 0.0001],
+    ['1.7976931348623E+308', 1.7976931348623E+308],
+    ['-1.7976931348623E+308', -1.7976931348623E+308],
 ]);
+
+dataset('overflow floats', [
+    ['1.7976931348624e+308'],
+    ['1e400'],
+    ['-1e400'],
+    ['99999999999999999999999999'],
+]);
+
+it('successfully casts various values to float', function (mixed $value, float $expected) {
+    expect(SmartCast::stringToFloat($value))->toBeFloat()->toBe($expected);
+})->with('valid floats');
 
 it('cast to float simple int value', function () {
     $result = SmartCast::stringToFloat('-1');
@@ -54,6 +81,10 @@ it('return null if accepted', function () {
 
     expect($result)->toBeNull();
 });
+
+test('throws FloatOverflowException when the value exceeds PHP_FLOAT_MAX or PHP_FLOAT_MIN', function ($input) {
+    SmartCast::stringToFloat($input);
+})->throws(FloatOverflowException::class)->with('overflow floats');
 
 it('throws error when value is null and null is not accepted', function () {
     SmartCast::stringToFloat(null);

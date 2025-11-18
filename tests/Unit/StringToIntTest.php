@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DF\Exceptions\IntegerOverflowException;
 use DF\Exceptions\InvalidNumberSignException;
 use DF\Exceptions\InvalidTypeException;
 use DF\Exceptions\NotNumericException;
@@ -9,21 +10,38 @@ use DF\Exceptions\ZeroValueException;
 use DF\NumberSign;
 use DF\SmartCast;
 
-it('successfully casts various values to integer', function (mixed $value, int $expected) {
-    expect(SmartCast::stringToInt($value))->toBeInt()->toBe($expected);
-})->with([
+dataset('valid integers', [
     // String integers
     ['1', 1],
+    ['123', 123],
     ['123', 123],
     ['0', 0],
     ['-5', -5],
     ['+10', 10],
+
+    // String integers with spaces
+    [' 123', 123],
+    ['123 ', 123],
+    [' 123 ', 123],
+    ['   123        ', 123],
+
+    // String integers with leading zeros
+    ['00', 0],
+    ['0123', 123],
+    ['00123', 123],
+    ['000123', 123],
+    ['0000123', 123],
+    ['0000123.0', 123],
+    ['0000123.00', 123],
 
     // Float-like strings that are essentially integers
     ['1.0', 1],
     ['2.00', 2],
     ['-3.0', -3],
     ['0.00', 0],
+    ['.0', 0],
+    ['+.0', 0],
+    ['-.0', 0],
     ['123.000', 123],
 
     // Integer values directly
@@ -31,7 +49,21 @@ it('successfully casts various values to integer', function (mixed $value, int $
     [0, 0],
     [-5, -5],
     [123, 123],
+
+    ['9223372036854775807', PHP_INT_MAX],
+    ['-9223372036854775808', PHP_INT_MIN],
 ]);
+
+dataset('overflow integers', [
+    ['9223372036854775808'],
+    ['9999999999999999999999999'],
+    ['-9223372036854775809'],
+    ['-9223372036854775809.0'],
+]);
+
+it('successfully casts various values to integer', function (mixed $value, int $expected) {
+    expect(SmartCast::stringToInt($value))->toBeInt()->toBe($expected);
+})->with('valid integers');
 
 it('cast to int trailing zero float value', function () {
     $result = SmartCast::stringToInt('1.0');
@@ -50,6 +82,10 @@ it('return null if accepted', function () {
 
     expect($result)->toBeNull();
 });
+
+it('throws IntegerOverflowException when the numeric string exceeds PHP integer range', function (string $input) {
+    SmartCast::stringToInt($input);
+})->throws(IntegerOverflowException::class)->with('overflow integers');
 
 it('throws error when value is null and null is not accepted', function () {
     SmartCast::stringToInt(null);
