@@ -158,6 +158,13 @@ class SmartCast
         $result = ltrim($result, '0');
 
         // Remove trailing .0
-        return preg_replace('/\.0+$/', '', $result);
+        $result = preg_replace('/\.0+$/', '', $result);
+
+        if ($result === '') {
+            $result = '0';
+        }
+
+        // Remove trailing .0
+        return $result;
     }
 }
