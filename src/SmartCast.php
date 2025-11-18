@@ -129,6 +129,59 @@ class SmartCast
         return $result;
     }
 
+    /**
+     * Converts a string representation into an array with additional validation
+     *
+     * Accepts JSON-like arrays (e.g., "[1,2,3]") or delimited strings (e.g., "1,2,3").
+     *
+     * @param  string|array|null  $value  The value to convert
+     * @param  bool  $acceptNull  If false, throws exception when value is null
+     * @return array|null Converted array value or null if accepted
+     */
+    public static function stringToArray(
+        string|array|null $value,
+        bool $acceptNull = false,
+    ): ?array {
+        if ($value === null && static::checkNullable($value, $acceptNull)) {
+            return null;
+        }
+
+        if (is_array($value)) {
+            return $value;
+        }
+
+        $value = trim($value);
+
+        if ($value === '') {
+            throw new InvalidTypeException($value);
+        }
+
+        $startsWithBracket = str_starts_with($value, '[');
+        $endsWithBracket = str_ends_with($value, ']');
+
+        if ($startsWithBracket && $endsWithBracket) {
+            $decoded = json_decode($value, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($decoded)) {
+                throw new InvalidTypeException($value);
+            }
+
+            return array_map(fn (mixed $item) => static::normalizeArrayValue($item), $decoded);
+        }
+
+        if ($startsWithBracket !== $endsWithBracket) {
+            throw new InvalidTypeException($value);
+        }
+
+        $items = static::normalizeArrayValue(explode(',', $value));
+
+        if (in_array('', $items, true)) {
+            throw new InvalidTypeException($value);
+        }
+
+        return $items;
+    }
+
     private static function checkIsNumeric(string|int|float $value): void
     {
         if (!is_numeric($value)) {
@@ -218,5 +271,32 @@ class SmartCast
         if ((float) $value === INF || $value !== (string) (float) $value) {
             throw new FloatOverflowException($value);
         }
+    }
+
+    private static function normalizeArrayValue(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return array_map(__METHOD__, $value);
+        }
+
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        if (!is_numeric($value)) {
+            return trim($value);
+        }
+
+        $value = static::normalizeNumericString($value);
+
+        if (filter_var($value, FILTER_VALIDATE_INT) !== false) {
+            return static::stringToInt($value);
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
+            return static::stringToFloat($value);
+        }
+
+        return $value;
     }
 }

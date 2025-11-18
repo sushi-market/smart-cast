@@ -65,3 +65,21 @@ if (!function_exists('stringToBoolean')) {
         return SmartCast::stringToBoolean($value);
     }
 }
+
+if (!function_exists('stringToArray')) {
+    /**
+     * Converts a string representation into an array with additional validation
+     *
+     * Accepts JSON-like arrays (e.g., "[1,2,3]") or delimited strings (e.g., "1,2,3").
+     *
+     * @param  string|array|null  $value  The value to convert
+     * @param  bool  $acceptNull  If false, throws exception when value is null
+     * @return array|null Converted array value
+     */
+    function stringToArray(
+        string|array|null $value,
+        bool $acceptNull = false,
+    ): ?array {
+        return SmartCast::stringToArray($value, $acceptNull);
+    }
+}
