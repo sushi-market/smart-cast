@@ -194,7 +194,7 @@ class SmartCast
         return strtoupper($result);
     }
 
-    public static function numericStringContainsOnlyZeros(string $value): bool
+    private static function numericStringContainsOnlyZeros(string $value): bool
     {
         // Remove sign, decimal point and exponent notation
         $normalized = preg_replace('/[+\-.eE]/', '', $value);
