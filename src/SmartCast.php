@@ -38,7 +38,7 @@ class SmartCast
         static::checkIsNumeric($value);
 
         if (is_string($value)) {
-            $value = static::normalizeIntegerString($value);
+            $value = static::normalizeNumericString($value);
         }
 
         if ($strictType && is_string($value) && preg_match('/\d+\.+(\d+)?/', $value) !== 0) {
@@ -81,7 +81,7 @@ class SmartCast
         static::checkIsNumeric($value);
 
         if (is_string($value)) {
-            $value = static::normalizeFloatString($value);
+            $value = static::normalizeNumericString($value);
         }
 
         if ($strictType && is_string($value) && preg_match('/^\d+\.\d+$/', $value) === 0) {
@@ -163,7 +163,7 @@ class SmartCast
         }
     }
 
-    private static function normalizeFloatString(string $value): string
+    private static function normalizeNumericString(string $value): string
     {
         $result = trim($value);
 
@@ -177,24 +177,21 @@ class SmartCast
         // Remove leading 0 to avoid issues
         $result = ltrim($result, '0');
 
+        // Convert e.g. .15 to 0.15
         if (str_starts_with($result, '.')) {
             $result = str_replace('.', '0.', $result);
         }
 
+        // Convert e.g. -.15 to -0.15
         if (str_starts_with($result, '-.')) {
             $result = str_replace('-.', '-0.', $result);
         }
 
-        // Convert to uppercase to normalize exponential notation (e.g., 1e+10 → 1E+10)
-        return strtoupper($result);
-    }
-
-    private static function normalizeIntegerString(string $value): string
-    {
-        $result = static::normalizeFloatString($value);
-
         // Remove trailing .0
-        return preg_replace('/\.0+$/', '', $result);
+        $result = preg_replace('/\.0+$/', '', $result);
+
+        // Convert to uppercase to normalize exponential notation (e.g., 1e+10 to 1E+10)
+        return strtoupper($result);
     }
 
     public static function numericStringContainsOnlyZeros(string $value): bool
@@ -208,6 +205,7 @@ class SmartCast
 
     private static function checkIntegerStringOverflow(string $value): void
     {
+        // Remove all after dot (e.g. 123.15 to 123)
         $value = preg_replace('/\..*$/', '', $value);
 
         if ($value !== (string) (int) $value) {
@@ -217,11 +215,7 @@ class SmartCast
 
     private static function checkFloatStringOverflow(string $value): void
     {
-        // Remove trailing .0
-        $value = preg_replace('/\.0+$/', '', $value);
-        $floatValue = (float) $value;
-
-        if ($floatValue === INF || $value !== (string) $floatValue) {
+        if ((float) $value === INF || $value !== (string) (float) $value) {
             throw new FloatOverflowException($value);
         }
     }
