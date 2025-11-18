@@ -279,12 +279,22 @@ class SmartCast
             return array_map(__METHOD__, $value);
         }
 
-        if (is_string($value)) {
-            $value = trim($value);
+        if (!is_string($value)) {
+            return $value;
         }
 
-        if (is_string($value) && is_numeric($value)) {
-            return $value + 0;
+        if (!is_numeric($value)) {
+            return trim($value);
+        }
+
+        $value = static::normalizeNumericString($value);
+
+        if (filter_var($value, FILTER_VALIDATE_INT) !== false) {
+            return static::stringToInt($value);
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_FLOAT) !== false) {
+            return static::stringToFloat($value);
         }
 
         return $value;
