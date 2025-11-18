@@ -185,6 +185,7 @@ class SmartCast
             $result = str_replace('-.', '-0.', $result);
         }
 
+        // Convert to uppercase to normalize exponential notation (e.g., 1e+10 → 1E+10)
         return strtoupper($result);
     }
 
