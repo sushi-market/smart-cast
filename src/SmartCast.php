@@ -161,7 +161,7 @@ class SmartCast
 
         $items = array_map(fn (string $item) => trim($item), explode(',', $value));
 
-        if ($items === [] || in_array('', $items, true)) {
+        if (in_array('', $items, true)) {
             throw new InvalidTypeException($value);
         }
 
