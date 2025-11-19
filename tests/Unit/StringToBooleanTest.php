@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use DF\Exceptions\InvalidBooleanStringException;
-use DF\SmartCast;
+use DF\SmartCast\Exceptions\InvalidBooleanStringException;
+use DF\SmartCast\SmartCast;
 
 it('casts various string values to boolean true', function (string $value) {
     expect(SmartCast::stringToBoolean($value))->toBeTrue();

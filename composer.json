@@ -24,7 +24,7 @@
     },
     "autoload": {
         "psr-4": {
-            "DF\\": "src/"
+            "DF\\SmartCast\\": "src/"
         },
         "files": [
             "src/functions.php"

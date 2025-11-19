@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DF;
+namespace DF\SmartCast;
 
 enum NumberSign
 {

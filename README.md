@@ -25,8 +25,8 @@ composer require sushi-market/smart-cast
 ```php
 <?php
 
-use DF\SmartCast;
-use DF\NumberSign;
+use DF\SmartCast\SmartCast;
+use DF\SmartCast\NumberSign;
 
 // Convert string to integer with strict type
 $intValue = SmartCast::stringToInt('123', strictType: false); // Returns 123

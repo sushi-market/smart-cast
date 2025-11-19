@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use DF\Exceptions\InvalidTypeException;
-use DF\SmartCast;
+use DF\SmartCast\Exceptions\InvalidTypeException;
+use DF\SmartCast\SmartCast;
 
 it('casts json array string to array', function () {
     expect(SmartCast::stringToArray('[1,2,3]'))
