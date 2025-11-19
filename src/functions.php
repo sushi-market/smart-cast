@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use DF\Exceptions\InvalidTypeException;
-use DF\NumberSign;
-use DF\SmartCast;
+use DF\SmartCast\Exceptions\InvalidTypeException;
+use DF\SmartCast\NumberSign;
+use DF\SmartCast\SmartCast;
 
 if (!function_exists('stringToInt')) {
     /**

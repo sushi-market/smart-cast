@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace DF;
+namespace DF\SmartCast;
 
 use BackedEnum;
-use DF\Exceptions\FloatOverflowException;
-use DF\Exceptions\IntegerOverflowException;
-use DF\Exceptions\InvalidArgumentException;
-use DF\Exceptions\InvalidBooleanStringException;
-use DF\Exceptions\InvalidNumberSignException;
-use DF\Exceptions\InvalidTypeException;
-use DF\Exceptions\NotNumericException;
-use DF\Exceptions\ZeroValueException;
+use DF\SmartCast\Exceptions\FloatOverflowException;
+use DF\SmartCast\Exceptions\IntegerOverflowException;
+use DF\SmartCast\Exceptions\InvalidArgumentException;
+use DF\SmartCast\Exceptions\InvalidBooleanStringException;
+use DF\SmartCast\Exceptions\InvalidNumberSignException;
+use DF\SmartCast\Exceptions\InvalidTypeException;
+use DF\SmartCast\Exceptions\NotNumericException;
+use DF\SmartCast\Exceptions\ZeroValueException;
 
 class SmartCast
 {

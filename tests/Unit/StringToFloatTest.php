@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use DF\Exceptions\FloatOverflowException;
-use DF\Exceptions\InvalidNumberSignException;
-use DF\Exceptions\InvalidTypeException;
-use DF\Exceptions\NotNumericException;
-use DF\Exceptions\ZeroValueException;
-use DF\NumberSign;
-use DF\SmartCast;
+use DF\SmartCast\Exceptions\FloatOverflowException;
+use DF\SmartCast\Exceptions\InvalidNumberSignException;
+use DF\SmartCast\Exceptions\InvalidTypeException;
+use DF\SmartCast\Exceptions\NotNumericException;
+use DF\SmartCast\Exceptions\ZeroValueException;
+use DF\SmartCast\NumberSign;
+use DF\SmartCast\SmartCast;
 
 dataset('valid floats', [
     // String floats

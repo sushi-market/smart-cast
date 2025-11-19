@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use DF\Exceptions\InvalidArgumentException;
-use DF\Exceptions\InvalidTypeException;
-use DF\SmartCast;
+use DF\SmartCast\Exceptions\InvalidArgumentException;
+use DF\SmartCast\Exceptions\InvalidTypeException;
+use DF\SmartCast\SmartCast;
 use Tests\Support\Enums\BackedTestEnum;
 use Tests\Support\Enums\UnitTestEnum;
 

@@ -24,10 +24,11 @@
     },
     "autoload": {
         "psr-4": {
-            "DF\\": "src/"
+            "DF\\SmartCast\\": "src/"
         },
         "files": [
-            "src/functions.php"
+            "src/functions.php",
+            "src/legacy_aliases.php"
         ]
     },
     "autoload-dev": {
