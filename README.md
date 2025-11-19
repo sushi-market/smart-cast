@@ -39,6 +39,24 @@ $floatValue = SmartCast::stringToFloat('123.45', acceptNull: false); // Returns 
 
 // Convert to boolean
 $boolValue = SmartCast::stringToBoolean('true'); // Returns true
+
+// Convert JSON-like array string
+$array = SmartCast::stringToArray('[1,2,3]'); // Returns: [1, 2, 3]
+
+// Convert delimited string to array
+$array = SmartCast::stringToArray('1,2,3,4'); // Returns: [1, 2, 3, 4]
+
+// Validate against array of allowed values
+$status = SmartCast::ensureAllowedString(
+    value: 'foo',
+    allowedValues: ['foo', 'bar', 'baz']
+); // Returns: 'foo'
+
+// Validate against backed enum
+$role = SmartCast::ensureAllowedString(
+    value: 'admin',
+    allowedValues: UserRoleEnum::class
+); // Returns: 'admin'
 ```
 or use helpers
 
@@ -56,6 +74,24 @@ $floatValue = stringToFloat('123.45', acceptNull: false); // Returns 123.45
 
 // Convert to boolean
 $boolValue = stringToBoolean('true'); // Returns true
+
+// Convert JSON-like array string
+$array = stringToArray('[1,2,3]'); // Returns: [1, 2, 3]
+
+// Convert delimited string to array
+$array = stringToArray('1,2,3,4'); // Returns: [1, 2, 3, 4]
+
+// Validate against array of allowed values
+$status = ensureAllowedString(
+    value: 'foo',
+    allowedValues: ['foo', 'bar', 'baz']
+); // Returns: 'foo'
+
+// Validate against backed enum
+$role = ensureAllowedString(
+    value: 'admin',
+    allowedValues: UserRoleEnum::class
+); // Returns: 'admin'
 ```
 
 
