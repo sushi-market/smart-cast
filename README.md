@@ -57,6 +57,12 @@ $role = SmartCast::ensureAllowedString(
     value: 'admin',
     allowedValues: UserRoleEnum::class
 ); // Returns: 'admin'
+
+// Decode base64-encoded JSON array
+$array = SmartCast::base64ToArray('WzEsMiwzXQ=='); // Returns: [1, 2, 3]
+
+// Decode base64-encoded JSON object
+$data = SmartCast::base64ToArray('eyJmb28iOiJiYXIifQ=='); // Returns: ['foo' => 'bar']
 ```
 or use helpers
 
@@ -92,6 +98,12 @@ $role = ensureAllowedString(
     value: 'admin',
     allowedValues: UserRoleEnum::class
 ); // Returns: 'admin'
+
+// Decode base64-encoded JSON array
+$array = base64ToArray('WzEsMiwzXQ=='); // Returns: [1, 2, 3]
+
+// Decode base64-encoded JSON object
+$data = base64ToArray('eyJmb28iOiJiYXIifQ=='); // Returns: ['foo' => 'bar']
 ```
 
 
