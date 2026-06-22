@@ -243,17 +243,17 @@ class SmartCast
      * The input must be a base64-encoded JSON object or array.
      * Pipeline: base64 decode → JSON decode → PHP array.
      *
-     * @param  string|null  $value      The base64-encoded string to decode
-     * @param  bool         $acceptNull If false, throws exception when value is null
-     * @return array|null   Decoded associative array or null if accepted
+     * @param  string|null  $value  The base64-encoded string to decode
+     * @param  bool  $acceptNull  If false, throws exception when value is null
+     * @return array|null Decoded associative array or null if accepted
      *
-     * @throws InvalidTypeException         When value is null and null is not accepted
+     * @throws InvalidTypeException When value is null and null is not accepted
      * @throws InvalidBase64StringException When value is not valid base64
-     * @throws InvalidJsonStringException   When decoded value is not valid JSON
-     * @throws InvalidTypeException         When decoded JSON is not an array or object
+     * @throws InvalidJsonStringException When decoded value is not valid JSON
+     * @throws InvalidTypeException When decoded JSON is not an array or object
      */
     public static function base64ToArray(
-        string|null $value,
+        ?string $value,
         bool $acceptNull = false,
     ): ?array {
         if (static::checkNullable($value, $acceptNull) && $value === null) {

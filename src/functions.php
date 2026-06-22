@@ -89,12 +89,12 @@ if (!function_exists('base64ToArray')) {
     /**
      * Decodes a base64-encoded string into a PHP array
      *
-     * @param  string|null  $value      The base64-encoded string to decode
-     * @param  bool         $acceptNull If false, throws exception when value is null
-     * @return array|null   Decoded associative array or null if accepted
+     * @param  string|null  $value  The base64-encoded string to decode
+     * @param  bool  $acceptNull  If false, throws exception when value is null
+     * @return array|null Decoded associative array or null if accepted
      */
     function base64ToArray(
-        string|null $value,
+        ?string $value,
         bool $acceptNull = false,
     ): ?array {
         return SmartCast::base64ToArray($value, $acceptNull);
