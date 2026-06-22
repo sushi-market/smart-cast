@@ -14,3 +14,5 @@ class_alias('DF\\SmartCast\\Exceptions\\InvalidTypeException', 'DF\\Exceptions\\
 class_alias('DF\\SmartCast\\Exceptions\\OverflowException', 'DF\\Exceptions\\OverflowException');
 class_alias('DF\\SmartCast\\Exceptions\\ZeroValueException', 'DF\\Exceptions\\ZeroValueException');
 class_alias('DF\\SmartCast\\Exceptions\\InvalidBooleanStringException', 'DF\\Exceptions\\InvalidBooleanStringException');
+class_alias('DF\\SmartCast\\Exceptions\\InvalidBase64StringException', 'DF\\Exceptions\\InvalidBase64StringException');
+class_alias('DF\\SmartCast\\Exceptions\\InvalidJsonStringException', 'DF\\Exceptions\\InvalidJsonStringException');
