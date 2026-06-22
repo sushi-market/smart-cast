@@ -8,7 +8,9 @@ use BackedEnum;
 use DF\SmartCast\Exceptions\FloatOverflowException;
 use DF\SmartCast\Exceptions\IntegerOverflowException;
 use DF\SmartCast\Exceptions\InvalidArgumentException;
+use DF\SmartCast\Exceptions\InvalidBase64StringException;
 use DF\SmartCast\Exceptions\InvalidBooleanStringException;
+use DF\SmartCast\Exceptions\InvalidJsonStringException;
 use DF\SmartCast\Exceptions\InvalidNumberSignException;
 use DF\SmartCast\Exceptions\InvalidTypeException;
 use DF\SmartCast\Exceptions\NotNumericException;
@@ -233,6 +235,48 @@ class SmartCast
         }
 
         throw new InvalidTypeException($value);
+    }
+
+    /**
+     * Decodes a base64-encoded string into a PHP array
+     *
+     * The input must be a base64-encoded JSON object or array.
+     * Pipeline: base64 decode → JSON decode → PHP array.
+     *
+     * @param  string|null  $value      The base64-encoded string to decode
+     * @param  bool         $acceptNull If false, throws exception when value is null
+     * @return array|null   Decoded associative array or null if accepted
+     *
+     * @throws InvalidTypeException         When value is null and null is not accepted
+     * @throws InvalidBase64StringException When value is not valid base64
+     * @throws InvalidJsonStringException   When decoded value is not valid JSON
+     * @throws InvalidTypeException         When decoded JSON is not an array or object
+     */
+    public static function base64ToArray(
+        string|null $value,
+        bool $acceptNull = false,
+    ): ?array {
+        if (static::checkNullable($value, $acceptNull) && $value === null) {
+            return null;
+        }
+
+        $decoded = base64_decode($value, strict: true);
+
+        if ($decoded === false) {
+            throw new InvalidBase64StringException($value);
+        }
+
+        $result = json_decode($decoded, associative: true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new InvalidJsonStringException($value);
+        }
+
+        if (!is_array($result)) {
+            throw new InvalidTypeException($value);
+        }
+
+        return $result;
     }
 
     private static function checkIsNumeric(string|int|float $value): void

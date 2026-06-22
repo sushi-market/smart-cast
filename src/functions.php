@@ -85,6 +85,22 @@ if (!function_exists('stringToArray')) {
     }
 }
 
+if (!function_exists('base64ToArray')) {
+    /**
+     * Decodes a base64-encoded string into a PHP array
+     *
+     * @param  string|null  $value      The base64-encoded string to decode
+     * @param  bool         $acceptNull If false, throws exception when value is null
+     * @return array|null   Decoded associative array or null if accepted
+     */
+    function base64ToArray(
+        string|null $value,
+        bool $acceptNull = false,
+    ): ?array {
+        return SmartCast::base64ToArray($value, $acceptNull);
+    }
+}
+
 if (!function_exists('ensureAllowedString')) {
     /**
      * Ensures that a given value is a valid string and belongs to the specified set of allowed values.
